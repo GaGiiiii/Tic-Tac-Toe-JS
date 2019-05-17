@@ -2,37 +2,48 @@ class Board{
 
   // PROPERTIES
 
-  turnPlayer; // Which player goes first and who's turn is right now.
+  startPlayer; // Which player goes first and who's turn is right now.
+  turnPlayer; // Whos turn is now.
   leftTurns; // How many turns are left.
   gameOver; // Is game over.
-  scoreP1 = 0; // Player 1 score.
-  scoreP2 = 0; // Player 2 score.
+  scoreP1; // Player 1 score.
+  scoreP2; // Player 2 score.
   arrowNumber1; // Help for arrow function resize.
   arrowNumber2; // Help for arrow function resize.
 
   constructor(){
-    this.clear(); // Clear the fields and prepare game
+    fields.forEach(field => {
+      field.innerText = '';
+    }); // Clear the fields and prepare game.
+    this.turnPlayer = 1; // Player 1 goes first.
+    this.startPlayer = 1; // Player 1 starts.
+    this.gameOver = false // Game is not over.
+    this.scoreP1 = this.scoreP2 = 0; // Set scores to 0.
+    this.leftTurns = 9; // Left moves.
   }
 
   clear(){
     fields.forEach(field => {
       field.innerText = '';
-    });
+    }); // Clear the fields and prepare game.
 
-    this.gameOver = false;
-    this.leftTurns = 9;
-    result.innerText = "";
+    this.leftTurns = 9; // Restart left moves.
+    result.innerText = ""; // Delete win message.
 
-    // Who goes first, if last time Player 1 went first, now Player 2 goes first.
+    // Who goes first, if last time Player 1 went first, now Player 2 goes first. Check this only if game ended.
 
-    if(this.turnPlayer == undefined){
-      this.turnPlayer = 1;
-    }else if(this.turnPlayer === 1){
-      this.turnPlayer = 2;
-    }else{
-      this.turnPlayer = 1;
+    if(this.gameOver){
+      if(this.startPlayer === 1){
+        this.startPlayer = 2;
+      }else{
+        this.startPlayer = 1;
+      }
     }
 
+    this.turnPlayer = this.startPlayer;
+    
+    this.gameOver = false; // Game starting again.
+    
     // After game is over and new game starts, we call clear method, we need to remove winning line, 
     // But if its first game there is no winning line to remove in constructor
 
@@ -74,12 +85,15 @@ class Board{
       this.updateScoreBoard();
 
       return;
+    }else{
+      this.gameOver = false;
     }
 
     if(!this.isThereLeftTurns() && !this.gameOver){
 
       // Draw
-
+      
+      this.gameOver = true;
       result.innerText = "DRAW!";
     }
   }
