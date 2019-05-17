@@ -1,0 +1,195 @@
+@import url(//db.onlinewebfonts.com/c/ae8f19f441b335c3fda30febf5069c5a?family=Gotham+Rounded);
+
+*, *::before, *::after{
+  box-sizing: border-box;
+  font-family: Gotham Rounded, sans-serif;
+  font-weight: normal;
+}
+
+body{
+  padding: 0;
+  margin: 0;
+  background: linear-gradient(to right, #4b6cb7, #182848);
+}
+
+.tictactoe-grid{
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  min-height: 100vh;
+  grid-template-columns: repeat(4, 150px);
+  grid-template-rows: 200px repeat(3, 150px);
+}
+
+.tictactoe-grid .header{
+  grid-column: 1 / 4;
+  text-align: center;
+  font-size: 3rem;
+  padding: 1rem;
+  color: #fff;
+}
+
+.tictactoe-grid .scoreboard{
+  grid-column: 4 / 5;
+  grid-row: 2 / -1;
+  margin-left: 2rem;
+  color: #fff;
+  line-height: 1.5rem;
+}
+
+.tictactoe-grid button{
+  cursor: pointer;
+  font-size: 5rem;
+  border: 1px solid #fff;
+  outline: none;
+  /*background-color: rgba(255, 255, 255, .75);*/
+  background: transparent;
+}
+
+.tictactoe-grid button:hover{
+  background-color: rgba(255, 255, 255, .1);
+}
+
+.tictactoe-grid button.reset-score, .tictactoe-grid button.play-again{
+  height: 50px;
+  width: 50px;
+  font-size: 1rem;
+  color: #fff;
+  margin-top: 1rem;
+  border: none;
+  padding-left: 0;
+  text-align: left;
+}
+
+button.no-top-border{
+  border-top: none;
+}
+
+button.no-left-border{
+  border-left: none;
+}
+
+button.no-bottom-border{
+  border-bottom: none;
+}
+
+button.no-right-border{
+  border-right: none;
+}
+
+.result{
+  display: block;
+  font-size: 1.5rem;
+  margin-top: 1rem;
+}
+
+/* ******    MEDIA QUERIES (780px)    ****** */
+
+@media only screen and (max-width: 780px) {
+  .tictactoe-grid{
+    grid-template-columns: repeat(4, 100px);
+    grid-template-rows: 140px repeat(3, 100px);
+    margin-top: -5rem;
+  }
+
+  .tictactoe-grid button{
+    font-size: 4rem;
+  }
+
+  .result{
+    font-size: 1rem;
+    margin-top: .5rem;
+  }
+
+  .tictactoe-grid .header{
+    font-size: 2rem;
+  }
+
+  .scoreboard{
+    font-size: .75rem;
+  }
+
+  .tictactoe-grid button.play-again, .tictactoe-grid button.reset-score{
+    font-size: .75rem;
+    margin-top: 0
+  }
+} 
+
+/* ******    MEDIA QUERIES (530px)    ****** */
+
+@media only screen and (max-width: 530px) {
+  .tictactoe-grid{
+    grid-template-columns: repeat(3, 75px) 90px;
+    grid-template-rows: 120px repeat(3, 75px);
+    margin-left: 2rem;
+    margin-top: -15rem;
+  }
+
+  .tictactoe-grid button{
+    font-size: 3rem;
+  }
+
+  .tictactoe-grid .header{
+    font-size: 1.5rem;
+  }
+
+  .scoreboard{
+    font-size: .6rem;
+  }
+
+  .tictactoe-grid button.play-again, .tictactoe-grid button.reset-score{
+    font-size: .6rem;
+    margin-top: -.5rem;
+  }
+}
+
+/* ******    MEDIA QUERIES (400px)    ****** */
+
+@media only screen and (max-width: 400px) {
+  .tictactoe-grid{
+    grid-template-columns: repeat(3, 70px);
+    grid-template-rows: 75px repeat(4, 70px);
+    margin-top: -10rem;
+    margin-left: -1rem;
+  }
+
+  .tictactoe-grid .scoreboard{
+    grid-column: 1 / 4;
+    grid-row: 5 / -1;
+    margin-top: 1.5rem;
+    line-height: 1rem;
+    text-align: left;
+    margin-left: 0;
+  }
+
+  .empty{
+    display: none;
+  }
+
+  .tictactoe-grid button{
+    font-size: 3rem;
+  }
+
+  .result{
+    font-size: 1rem;
+    margin-top: .5rem;
+  }
+
+  .tictactoe-grid .header{
+    font-size: 1.1rem;
+  }
+
+  .scoreboard{
+    font-size: .75rem;
+  }
+
+  .tictactoe-grid button.play-again, .tictactoe-grid button.reset-score{
+    font-size: .75rem;
+    margin-top: 0;
+    display: block;
+  }
+
+  .tictactoe-grid button.reset-score{
+    margin-top: -1.7rem;
+  }
+}
