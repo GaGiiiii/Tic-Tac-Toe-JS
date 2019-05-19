@@ -76,12 +76,6 @@ class Board{
 
       // If game is over and Player 1 went 1st, next game Player 2 goes 1st.
 
-      if(this.turnPlayer === 1){
-        this.turnPlayer = 2;
-      }else{
-        this.turnPlayer = 1;
-      }
-
       this.updateScoreBoard();
 
       return;
