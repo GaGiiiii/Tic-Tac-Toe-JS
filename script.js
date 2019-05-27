@@ -105,6 +105,14 @@ class Board{
     this.scoreP1 = 0;
     this.scoreP2 = 0;
     this.updateScoreBoard();
+    fields.forEach(field => {
+      field.innerText = '';
+    }); // Clear the fields and prepare game.
+    this.turnPlayer = 1; // Player 1 goes first.
+    this.startPlayer = 1; // Player 1 starts.
+    this.gameOver = false // Game is not over.
+    this.scoreP1 = this.scoreP2 = 0; // Set scores to 0.
+    this.leftTurns = 9; // Left moves.
   }
 
   checkForWin(){
