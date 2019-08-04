@@ -244,7 +244,7 @@ class Board{
         return fields[6];
       }
   
-      return this.checkDanger();
+      return this.checkDanger().field;
   
     }else{
   
@@ -265,278 +265,283 @@ class Board{
         }
       }
   
-      return this.checkDanger();
+      return this.checkDanger().field;
     }
   }
 
   tryToWin(){
 
-    // CHECK ALL DANGERS FOR FIELD 0 ******************
-  
-    if(fields[0].innerText === fields[1].innerText && this.isFieldEmpty(fields[2]) && fields[0].innerText === 'O'){
-      return fields[2];
-    }
-  
-    if(fields[0].innerText === fields[2].innerText && this.isFieldEmpty(fields[1]) && fields[0].innerText === 'O'){
-      return fields[1];
-    }
-  
-    if(fields[0].innerText === fields[3].innerText && this.isFieldEmpty(fields[6]) && fields[0].innerText === 'O'){
-      return fields[6];
-    }
-  
-    if(fields[0].innerText === fields[6].innerText && this.isFieldEmpty(fields[3]) && fields[0].innerText === 'O'){
-      return fields[3];
-    }
-  
-    if(fields[0].innerText === fields[4].innerText && this.isFieldEmpty(fields[8]) && fields[0].innerText === 'O'){
-      return fields[8];
-    }
-  
-    if(fields[0].innerText === fields[8].innerText && this.isFieldEmpty(fields[4]) && fields[0].innerText === 'O'){
-      return fields[4];
-    }
-  
-    // CHECK ALL DANGERS FOR FIELD 1 ******************
-  
-    if(fields[1].innerText === fields[2].innerText && this.isFieldEmpty(fields[0]) && fields[1].innerText === 'O'){
-      return fields[0];
-    }
-  
-    if(fields[1].innerText === fields[4].innerText && this.isFieldEmpty(fields[7]) && fields[1].innerText === 'O'){
-      return fields[7];
-    }
-  
-    if(fields[1].innerText === fields[7].innerText && this.isFieldEmpty(fields[4]) && fields[1].innerText === 'O'){
-      return fields[4];
-    }
-  
-    // CHECK ALL DANGERS FOR FIELD 2 ******************
+    let x = this.checkDanger('tryToWIn');
 
-    if(fields[2].innerText === fields[4].innerText && this.isFieldEmpty(fields[6]) && fields[2].innerText === 'O'){
-      return fields[6];
-    }
-  
-    if(fields[2].innerText === fields[4].innerText && this.isFieldEmpty(fields[6]) && fields[2].innerText === 'O'){
-      return fields[6];
-    }
-  
-    if(fields[2].innerText === fields[6].innerText && this.isFieldEmpty(fields[4]) && fields[2].innerText === 'O'){
-      return fields[4];
-    }
-  
-    if(fields[2].innerText === fields[5].innerText && this.isFieldEmpty(fields[8]) && fields[2].innerText === 'O'){
-      return fields[8];
-    }
-  
-    if(fields[2].innerText === fields[8].innerText && this.isFieldEmpty(fields[5]) && fields[2].innerText === 'O'){
-      return fields[5];
-    }
-  
-    // CHECK ALL DANGERS FOR FIELD 3 ******************
-  
-    if(fields[3].innerText === fields[6].innerText && this.isFieldEmpty(fields[0]) && fields[3].innerText === 'O'){
-      return fields[0];
-    }
-  
-    if(fields[3].innerText === fields[4].innerText && this.isFieldEmpty(fields[5]) && fields[3].innerText === 'O'){
-      return fields[5];
-    }
-  
-    if(fields[3].innerText === fields[5].innerText && this.isFieldEmpty(fields[4]) && fields[3].innerText === 'O'){
-      return fields[4];
-    }
-  
-    // CHECK ALL DANGERS FOR FIELD 4 ******************
-  
-    if(fields[4].innerText === fields[5].innerText && this.isFieldEmpty(fields[3]) && fields[4].innerText === 'O'){
-      return fields[3];
-    }
-
-    if(fields[4].innerText === fields[6].innerText && this.isFieldEmpty(fields[2]) && fields[4].innerText === 'O'){
-      return fields[2];
-    }
-  
-    if(fields[4].innerText === fields[7].innerText && this.isFieldEmpty(fields[1]) && fields[4].innerText === 'O'){
-      return fields[1];
-    }
-  
-    if(fields[4].innerText === fields[8].innerText && this.isFieldEmpty(fields[0]) && fields[4].innerText === 'O'){
-      return fields[0];
-    }
-  
-    // CHECK ALL DANGERS FOR FIELD 5 ******************
-  
-    if(fields[5].innerText === fields[8].innerText && this.isFieldEmpty(fields[2]) && fields[5].innerText === 'O'){
-      return fields[2];
-    }
-  
-    // CHECK ALL DANGERS FOR FIELD 6 ******************
-  
-    if(fields[6].innerText === fields[7].innerText && this.isFieldEmpty(fields[8]) && fields[6].innerText === 'O'){
-      return fields[8];
-    }
-  
-    if(fields[6].innerText === fields[8].innerText && this.isFieldEmpty(fields[7]) && fields[6].innerText === 'O'){
-      return fields[7];
-    }
-  
-    // CHECK ALL DANGERS FOR FIELD 7 ******************
-
-    if(fields[7].innerText === fields[8].innerText && this.isFieldEmpty(fields[6]) && fields[7].innerText === 'O'){
-      return fields[6];
-    }
-
-    return null;
-  }
-
-  checkDanger(){
-
-    let x = this.tryToWin();
-
-    if(x != null){
+    if(x.dangerFrom !== 'X'){
+      // I can win
       return x;
     }
 
+    if(x.lastCombination)
+
+    x.dangerFrom = 'Z';
+
+    return x;
+  }
+
+  checkDanger(caller){
+
+    if(caller !== 'tryToWIn'){
+      let win = this.tryToWin();
+
+      if(win.dangerFrom !== 'Z'){
+        return win.field;
+      }
+    }
+
     // CHECK ALL DANGERS FOR FIELD 0 ******************
+
+    let x = {
+      field: fields[0],
+      dangerFrom: 'Z',
+      lastCombination: 0
+    }
   
     if(fields[0].innerText === fields[1].innerText && this.isFieldEmpty(fields[2]) && fields[0].innerText !== ''){
-      return fields[2];
+      x.field = fields[2];
+      x.dangerFrom = fields[0].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[0].innerText === fields[2].innerText && this.isFieldEmpty(fields[1]) && fields[0].innerText !== ''){
-      return fields[1];
+      x.field = fields[1];
+      x.dangerFrom = fields[0].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[0].innerText === fields[3].innerText && this.isFieldEmpty(fields[6]) && fields[0].innerText !== ''){
-      return fields[6];
+      x.field = fields[6];
+      x.dangerFrom = fields[0].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[0].innerText === fields[6].innerText && this.isFieldEmpty(fields[3]) && fields[0].innerText !== ''){
-      return fields[3];
+      x.field = fields[3];
+      x.dangerFrom = fields[0].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[0].innerText === fields[4].innerText && this.isFieldEmpty(fields[8]) && fields[0].innerText !== ''){
-      return fields[8];
+      x.field = fields[8];
+      x.dangerFrom = fields[0].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[0].innerText === fields[8].innerText && this.isFieldEmpty(fields[4]) && fields[0].innerText !== ''){
-      return fields[4];
+      x.field = fields[4];
+      x.dangerFrom = fields[0].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     // CHECK ALL DANGERS FOR FIELD 1 ******************
   
     if(fields[1].innerText === fields[2].innerText && this.isFieldEmpty(fields[0]) && fields[1].innerText !== ''){
-      return fields[0];
+      x.field = fields[0];
+      x.dangerFrom = fields[1].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[1].innerText === fields[4].innerText && this.isFieldEmpty(fields[7]) && fields[1].innerText !== ''){
-      return fields[7];
+      x.field = fields[7];
+      x.dangerFrom = fields[1].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[1].innerText === fields[7].innerText && this.isFieldEmpty(fields[4]) && fields[1].innerText !== ''){
-      return fields[4];
+      x.field = fields[4];
+      x.dangerFrom = fields[1].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     // CHECK ALL DANGERS FOR FIELD 2 ******************
-
-    if(fields[2].innerText === fields[4].innerText && this.isFieldEmpty(fields[6]) && fields[2].innerText !== ''){
-      return fields[6];
-    }
   
     if(fields[2].innerText === fields[4].innerText && this.isFieldEmpty(fields[6]) && fields[2].innerText !== ''){
-      return fields[6];
+      x.field = fields[6];
+      x.dangerFrom = fields[2].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[2].innerText === fields[6].innerText && this.isFieldEmpty(fields[4]) && fields[2].innerText !== ''){
-      return fields[4];
+      x.field = fields[4];
+      x.dangerFrom = fields[2].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[2].innerText === fields[5].innerText && this.isFieldEmpty(fields[8]) && fields[2].innerText !== ''){
-      return fields[8];
+      x.field = fields[8];
+      x.dangerFrom = fields[2].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[2].innerText === fields[8].innerText && this.isFieldEmpty(fields[5]) && fields[2].innerText !== ''){
-      return fields[5];
+      x.field = fields[5];
+      x.dangerFrom = fields[2].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     // CHECK ALL DANGERS FOR FIELD 3 ******************
   
     if(fields[3].innerText === fields[6].innerText && this.isFieldEmpty(fields[0]) && fields[3].innerText !== ''){
-      return fields[0];
+      x.field = fields[2];
+      x.dangerFrom = fields[0].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[3].innerText === fields[4].innerText && this.isFieldEmpty(fields[5]) && fields[3].innerText !== ''){
-      return fields[5];
+      x.field = fields[5];
+      x.dangerFrom = fields[3].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[3].innerText === fields[5].innerText && this.isFieldEmpty(fields[4]) && fields[3].innerText !== ''){
-      return fields[4];
+      x.field = fields[4];
+      x.dangerFrom = fields[3].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     // CHECK ALL DANGERS FOR FIELD 4 ******************
   
     if(fields[4].innerText === fields[5].innerText && this.isFieldEmpty(fields[3]) && fields[4].innerText !== ''){
-      return fields[3];
+      x.field = fields[3];
+      x.dangerFrom = fields[4].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
 
     if(fields[4].innerText === fields[6].innerText && this.isFieldEmpty(fields[2]) && fields[4].innerText !== ''){
-      return fields[2];
+      x.field = fields[2];
+      x.dangerFrom = fields[4].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[4].innerText === fields[7].innerText && this.isFieldEmpty(fields[1]) && fields[4].innerText !== ''){
-      return fields[1];
+      x.field = fields[1];
+      x.dangerFrom = fields[4].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[4].innerText === fields[8].innerText && this.isFieldEmpty(fields[0]) && fields[4].innerText !== ''){
-      return fields[0];
+      x.field = fields[0];
+      x.dangerFrom = fields[4].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     // CHECK ALL DANGERS FOR FIELD 5 ******************
   
     if(fields[5].innerText === fields[8].innerText && this.isFieldEmpty(fields[2]) && fields[5].innerText !== ''){
-      return fields[2];
+      x.field = fields[2];
+      x.dangerFrom = fields[0].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     // CHECK ALL DANGERS FOR FIELD 6 ******************
   
     if(fields[6].innerText === fields[7].innerText && this.isFieldEmpty(fields[8]) && fields[6].innerText !== ''){
-      return fields[8];
+      x.field = fields[8];
+      x.dangerFrom = fields[6].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     if(fields[6].innerText === fields[8].innerText && this.isFieldEmpty(fields[7]) && fields[6].innerText !== ''){
-      return fields[7];
+      x.field = fields[7];
+      x.dangerFrom = fields[6].innerText;
+      x.lastCombination = 0;
+
+      return x;
     }
   
     // CHECK ALL DANGERS FOR FIELD 7 ******************
 
     if(fields[7].innerText === fields[8].innerText && this.isFieldEmpty(fields[6]) && fields[7].innerText !== ''){
-      return fields[6];
+      x.field = fields[6];
+      x.dangerFrom = fields[0].innerText;
+      x.lastCombination = 1;
+
+      return x;
     }
   
     // IF THERE IS NO DANGER CHECK CORNERS
   
     if(this.isFieldEmpty(fields[0])){
-      return fields[0];
+      x.field = fields[0];
+
+      return x;
     }
   
     if(this.isFieldEmpty(fields[2])){
-      return fields[2];
+      x.field = fields[2];
+
+      return x;
     }
   
     if(this.isFieldEmpty(fields[6])){
-      return fields[6];
+      x.field = fields[6];
+
+      return x;
     }
   
     if(this.isFieldEmpty(fields[8])){
-      return fields[8];
+      x.field = fields[8];
+
+      return x;
     }
 
     // IF CORNER IS NOT AVAILABLE PLAY AT FIRST EMPTY SPOT
   
     for(let i = 0; i < fields.length; i++){
       if(this.isFieldEmpty(fields[i])){
-        return fields[i];
+        x.field = fields[i];
+
+        return x;
       }
     }
 
