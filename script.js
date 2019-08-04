@@ -3,13 +3,14 @@ class Board{
   // PROPERTIES
 
   startPlayer; // Which player goes first and who's turn is right now.
-  turnPlayer; // Whos turn is now.
+  turnPlayer; // Who's turn is now.
   leftTurns; // How many turns are left.
   gameOver; // Is game over.
   scoreP1; // Player 1 score.
   scoreP2; // Player 2 score.
   arrowNumber1; // Help for arrow function resize.
   arrowNumber2; // Help for arrow function resize.
+  mode; // One player / Two players
 
   constructor(){
     fields.forEach(field => {
@@ -20,7 +21,10 @@ class Board{
     this.gameOver = false // Game is not over.
     this.scoreP1 = this.scoreP2 = 0; // Set scores to 0.
     this.leftTurns = 9; // Left moves.
+    this.mode = 'two-players'; // Mode
   }
+
+  // METHODS
 
   clear(){
     fields.forEach(field => {
@@ -33,10 +37,18 @@ class Board{
     // Who goes first, if last time Player 1 went first, now Player 2 goes first. Check this only if game ended.
 
     if(this.gameOver){
-      if(this.startPlayer === 1){
-        this.startPlayer = 2;
+      if(board.mode === "two-players"){
+        if(this.startPlayer === 1){
+          this.startPlayer = 2;
+        }else{
+          this.startPlayer = 1;
+        }
       }else{
-        this.startPlayer = 1;
+        if(this.startPlayer === 1){
+          this.startPlayer = 3;
+        }else{
+          this.startPlayer = 1;
+        }
       }
     }
 
@@ -49,6 +61,13 @@ class Board{
 
     if(winningLine !== null){
       winningLine.style.display = "none";
+    }
+
+    // When computer is first we need to manually call drawShape function
+
+    if(this.startPlayer === 3){
+      let shapeToDraw = this.findShape();
+      this.drawShape(shapeToDraw);
     }
   }
 
@@ -63,14 +82,53 @@ class Board{
 
     if(this.turnPlayer === 1){
       field.innerText = 'X';
-      this.turnPlayer = 2;
+
+      if(board.mode === "two-players"){
+        this.turnPlayer = 2;
+        this.leftTurns--;
+      }else{
+        this.leftTurns--;
+        this.turnPlayer = 3;
+
+        // Before computer plays his move with recursive function we need to check if game ended.
+
+        if(this.checkForWin()){
+          this.gameOver = true;
+    
+          // If game is over and Player 1 went 1st, next game Player 2 goes 1st.
+    
+          this.updateScoreBoard();
+    
+          return;
+        }else{
+          this.gameOver = false;
+        }
+    
+        if(!this.isThereLeftTurns() && !this.gameOver){
+    
+          // Draw
+          
+          this.gameOver = true;
+          result.innerText = "DRAW!";
+        }
+
+        // Find field for computer
+
+        let shapeToDraw = this.findShape();
+        this.drawShape(shapeToDraw);
+
+        return; // We need to return here because of recursion.
+      }
+    }else if(this.turnPlayer === 2){
+      field.innerText = 'O';
+      this.turnPlayer = 1;
       this.leftTurns--;
     }else{
       field.innerText = 'O';
       this.turnPlayer = 1;
       this.leftTurns--;
     }
-
+    
     if(this.checkForWin()){
       this.gameOver = true;
 
@@ -97,14 +155,21 @@ class Board{
   }
 
   updateScoreBoard(){
+
+    // We need to always select new elements because innerHTML deletes the old ones.
+
+    let scoreP1Span = document.querySelector('[data-score-p1]');
+    let scoreP2Span = document.querySelector('[data-score-p2]');
+
     scoreP1Span.innerText = this.scoreP1;
     scoreP2Span.innerText = this.scoreP2;
   }
 
   resetScore(){
-    this.scoreP1 = 0;
-    this.scoreP2 = 0;
-    this.updateScoreBoard();
+    result.innerText = ""; // Delete win message.
+    this.scoreP1 = 0; // Set scores to 0
+    this.scoreP2 = 0; // Set scores to 0
+    this.updateScoreBoard(); // Update scoreboard
     fields.forEach(field => {
       field.innerText = '';
     }); // Clear the fields and prepare game.
@@ -113,6 +178,241 @@ class Board{
     this.gameOver = false // Game is not over.
     this.scoreP1 = this.scoreP2 = 0; // Set scores to 0.
     this.leftTurns = 9; // Left moves.
+
+    if(winningLine !== null){
+      winningLine.style.display = "none";
+    }
+  }
+
+  twoPlayersMode(){
+    this.mode = 'two-players';
+    this.resetScore();
+  
+    twoPlayers.style.backgroundColor = "rgba(255, 255, 255, .1)";
+    twoPlayers.disabled = true;
+    twoPlayers.style.cursor = 'not-allowed';
+  
+    vsComputer.style.backgroundColor = "transparent";
+    vsComputer.disabled = false;
+    vsComputer.style.cursor = 'pointer';
+  
+    scoreboardResult.innerHTML = "<div class='scoreboard-result'>\
+    Player 1: <span data-score-p1=''>0</span>\
+    <br>\
+    Player 2: <span data-score-p2=''>0</span>\
+    </div>";
+  }
+
+  vsComputerMode(){
+    this.mode = 'vs-computer';
+    this.resetScore();
+  
+    vsComputer.style.backgroundColor = "rgba(255, 255, 255, .1)";
+    vsComputer.disabled = true;
+    vsComputer.style.cursor = 'not-allowed';
+  
+    twoPlayers.style.backgroundColor = "transparent";
+    twoPlayers.disabled = false;
+    twoPlayers.style.cursor = 'pointer';
+  
+    scoreboardResult.innerHTML = "<div class='scoreboard-result'>\
+    Player: <span data-score-p1=''>0</span>\
+    <br>\
+    Computer: <span data-score-p2=''>0</span>\
+    </div>";
+  }
+
+  isFieldEmpty(field){
+    return field.innerText === '' ? 1 : 0;
+  }
+  
+  findShape(){
+  
+    // COMP STARTS FIRST
+  
+    if(this.startPlayer === 3){
+  
+      if(this.leftTurns === 9){
+        return fields[0];
+      }
+  
+      if(this.leftTurns === 7){
+        if(this.isFieldEmpty(fields[8])){
+          return fields[8];
+        }
+  
+        return fields[6];
+      }
+  
+      return this.checkDanger();
+  
+    }else{
+  
+      // PLAYER GOES FIRST
+  
+      if(this.leftTurns === 8){
+        // da li je prazno polje 5
+        if(this.isFieldEmpty(fields[4])){
+          return fields[4];
+        }else{
+          return fields[0];
+        }
+      }
+  
+      if(this.leftTurns === 6){
+        if((fields[0].innerText === 'X' && fields[8].innerText === 'X') || (fields[2].innerText === 'X' && fields[6].innerText === 'X')){
+          return fields[1];
+        }
+      }
+  
+      return this.checkDanger();
+    }
+  }
+
+  checkDanger(){
+
+    // CHECK ALL DANGERS FOR FIELD 0 ******************
+  
+    if(fields[0].innerText === fields[1].innerText && this.isFieldEmpty(fields[2]) && fields[0].innerText !== ''){
+      return fields[2];
+    }
+  
+    if(fields[0].innerText === fields[2].innerText && this.isFieldEmpty(fields[1]) && fields[0].innerText !== ''){
+      return fields[1];
+    }
+  
+    if(fields[0].innerText === fields[3].innerText && this.isFieldEmpty(fields[6]) && fields[0].innerText !== ''){
+      return fields[6];
+    }
+  
+    if(fields[0].innerText === fields[6].innerText && this.isFieldEmpty(fields[3]) && fields[0].innerText !== ''){
+      return fields[3];
+    }
+  
+    if(fields[0].innerText === fields[4].innerText && this.isFieldEmpty(fields[8]) && fields[0].innerText !== ''){
+      return fields[8];
+    }
+  
+    if(fields[0].innerText === fields[8].innerText && this.isFieldEmpty(fields[4]) && fields[0].innerText !== ''){
+      return fields[4];
+    }
+  
+    // CHECK ALL DANGERS FOR FIELD 1 ******************
+  
+    if(fields[1].innerText === fields[2].innerText && this.isFieldEmpty(fields[0]) && fields[1].innerText !== ''){
+      return fields[0];
+    }
+  
+    if(fields[1].innerText === fields[4].innerText && this.isFieldEmpty(fields[7]) && fields[1].innerText !== ''){
+      return fields[7];
+    }
+  
+    if(fields[1].innerText === fields[7].innerText && this.isFieldEmpty(fields[4]) && fields[1].innerText !== ''){
+      return fields[4];
+    }
+  
+    // CHECK ALL DANGERS FOR FIELD 2 ******************
+
+    if(fields[2].innerText === fields[4].innerText && this.isFieldEmpty(fields[6]) && fields[2].innerText !== ''){
+      return fields[6];
+    }
+  
+    if(fields[2].innerText === fields[4].innerText && this.isFieldEmpty(fields[6]) && fields[2].innerText !== ''){
+      return fields[6];
+    }
+  
+    if(fields[2].innerText === fields[6].innerText && this.isFieldEmpty(fields[4]) && fields[2].innerText !== ''){
+      return fields[4];
+    }
+  
+    if(fields[2].innerText === fields[5].innerText && this.isFieldEmpty(fields[8]) && fields[2].innerText !== ''){
+      return fields[8];
+    }
+  
+    if(fields[2].innerText === fields[8].innerText && this.isFieldEmpty(fields[5]) && fields[2].innerText !== ''){
+      return fields[5];
+    }
+  
+    // CHECK ALL DANGERS FOR FIELD 3 ******************
+  
+    if(fields[3].innerText === fields[6].innerText && this.isFieldEmpty(fields[0]) && fields[3].innerText !== ''){
+      return fields[0];
+    }
+  
+    if(fields[3].innerText === fields[4].innerText && this.isFieldEmpty(fields[5]) && fields[3].innerText !== ''){
+      return fields[5];
+    }
+  
+    if(fields[3].innerText === fields[5].innerText && this.isFieldEmpty(fields[4]) && fields[3].innerText !== ''){
+      return fields[4];
+    }
+  
+    // CHECK ALL DANGERS FOR FIELD 4 ******************
+  
+    if(fields[4].innerText === fields[5].innerText && this.isFieldEmpty(fields[3]) && fields[4].innerText !== ''){
+      return fields[3];
+    }
+
+    if(fields[4].innerText === fields[6].innerText && this.isFieldEmpty(fields[2]) && fields[4].innerText !== ''){
+      return fields[2];
+    }
+  
+    if(fields[4].innerText === fields[7].innerText && this.isFieldEmpty(fields[1]) && fields[4].innerText !== ''){
+      return fields[1];
+    }
+  
+    if(fields[4].innerText === fields[8].innerText && this.isFieldEmpty(fields[0]) && fields[4].innerText !== ''){
+      return fields[0];
+    }
+  
+    // CHECK ALL DANGERS FOR FIELD 5 ******************
+  
+    if(fields[5].innerText === fields[8].innerText && this.isFieldEmpty(fields[2]) && fields[5].innerText !== ''){
+      return fields[2];
+    }
+  
+    // CHECK ALL DANGERS FOR FIELD 6 ******************
+  
+    if(fields[6].innerText === fields[7].innerText && this.isFieldEmpty(fields[8]) && fields[6].innerText !== ''){
+      return fields[8];
+    }
+  
+    if(fields[6].innerText === fields[8].innerText && this.isFieldEmpty(fields[7]) && fields[6].innerText !== ''){
+      return fields[7];
+    }
+  
+    // CHECK ALL DANGERS FOR FIELD 7 ******************
+
+    if(fields[7].innerText === fields[8].innerText && this.isFieldEmpty(fields[6]) && fields[7].innerText !== ''){
+      return fields[6];
+    }
+  
+    // IF THERE IS NO DANGER CHECK CORNERS
+  
+    if(this.isFieldEmpty(fields[0])){
+      return fields[0];
+    }
+  
+    if(this.isFieldEmpty(fields[2])){
+      return fields[2];
+    }
+  
+    if(this.isFieldEmpty(fields[6])){
+      return fields[6];
+    }
+  
+    if(this.isFieldEmpty(fields[8])){
+      return fields[8];
+    }
+
+    // IF CORNER IS NOT AVAILABLE PLAY AT FIRST EMPTY SPOT
+  
+    for(let i = 0; i < fields.length; i++){
+      if(this.isFieldEmpty(fields[i])){
+        return fields[i];
+      }
+    }
+
   }
 
   checkForWin(){
@@ -132,10 +432,10 @@ class Board{
 
       if(fields[0].innerText === 'X'){
         this.scoreP1++;
-        result.innerText = "Player 1 wins!";
+        board.mode === "two-players" ? result.innerText = "Player 1 wins!" : result.innerText = "Player wins!";
       }else{
         this.scoreP2++;
-        result.innerText = "Player 2 wins!";
+        board.mode === "two-players" ? result.innerText = "Player 2 wins!" : result.innerText = "Computer wins!";
       }
 
       this.arrowNumber1 = 0;
@@ -161,10 +461,10 @@ class Board{
 
     if(fields[0].innerText === 'X'){
       this.scoreP1++;
-      result.innerText = "Player 1 wins!";
+      board.mode === "two-players" ? result.innerText = "Player 1 wins!" : result.innerText = "Player wins!";
     }else{
       this.scoreP2++;
-      result.innerText = "Player 2 wins!";
+      board.mode === "two-players" ? result.innerText = "Player 2 wins!" : result.innerText = "Computer wins!";
     }
 
     this.arrowNumber1 = 0;
@@ -190,10 +490,10 @@ class Board{
 
     if(fields[0].innerText === 'X'){
       this.scoreP1++;
-      result.innerText = "Player 1 wins!";
+      board.mode === "two-players" ? result.innerText = "Player 1 wins!" : result.innerText = "Player wins!";
     }else{
       this.scoreP2++;
-      result.innerText = "Player 2 wins!";
+      board.mode === "two-players" ? result.innerText = "Player 2 wins!" : result.innerText = "Computer wins!";
     }
 
     this.arrowNumber1 = 0;
@@ -219,10 +519,10 @@ class Board{
 
     if(fields[1].innerText === 'X'){
       this.scoreP1++;
-      result.innerText = "Player 1 wins!";
+      board.mode === "two-players" ? result.innerText = "Player 1 wins!" : result.innerText = "Player wins!";
     }else{
       this.scoreP2++;
-      result.innerText = "Player 2 wins!";
+      board.mode === "two-players" ? result.innerText = "Player 2 wins!" : result.innerText = "Computer wins!";
     }
 
     this.arrowNumber1 = 1;
@@ -248,10 +548,10 @@ class Board{
 
     if(fields[2].innerText === 'X'){
       this.scoreP1++;
-      result.innerText = "Player 1 wins!";
+      board.mode === "two-players" ? result.innerText = "Player 1 wins!" : result.innerText = "Player wins!";
     }else{
       this.scoreP2++;
-      result.innerText = "Player 2 wins!";
+      board.mode === "two-players" ? result.innerText = "Player 2 wins!" : result.innerText = "Computer wins!";
     }
 
     this.arrowNumber1 = 2;
@@ -277,10 +577,10 @@ class Board{
 
     if(fields[2].innerText === 'X'){
       this.scoreP1++;
-      result.innerText = "Player 1 wins!";
+      board.mode === "two-players" ? result.innerText = "Player 1 wins!" : result.innerText = "Player wins!";
     }else{
       this.scoreP2++;
-      result.innerText = "Player 2 wins!";
+      board.mode === "two-players" ? result.innerText = "Player 2 wins!" : result.innerText = "Computer wins!";
     }
 
     this.arrowNumber1 = 2;
@@ -306,10 +606,10 @@ class Board{
 
     if(fields[3].innerText === 'X'){
       this.scoreP1++;
-      result.innerText = "Player 1 wins!";
+      board.mode === "two-players" ? result.innerText = "Player 1 wins!" : result.innerText = "Player wins!";
     }else{
       this.scoreP2++;
-      result.innerText = "Player 2 wins!";
+      board.mode === "two-players" ? result.innerText = "Player 2 wins!" : result.innerText = "Computer wins!";
     }
 
     this.arrowNumber1 = 3;
@@ -335,10 +635,10 @@ class Board{
 
       if(fields[6].innerText === 'X'){
         this.scoreP1++;
-        result.innerText = "Player 1 wins!";
+        board.mode === "two-players" ? result.innerText = "Player 1 wins!" : result.innerText = "Player wins!";
       }else{
         this.scoreP2++;
-        result.innerText = "Player 2 wins!";
+        board.mode === "two-players" ? result.innerText = "Player 2 wins!" : result.innerText = "Computer wins!";
       }
 
       this.arrowNumber1 = 6;
@@ -422,16 +722,33 @@ class Board{
   }
 }
 
+// VARIABLES
+
+let scoreboardResult = document.querySelector(".scoreboard-result");
 const fields = document.querySelectorAll('[data-field]');
 const shapes = document.querySelectorAll('[data-shape]');
 const result = document.querySelector("[data-result]");
 const resetScore = document.querySelector('[data-reset-score]');
 const playAgain = document.querySelector('[data-play-again]');
-const scoreP1Span = document.querySelector('[data-score-p1]');
-const scoreP2Span = document.querySelector('[data-score-p2]');
+const vsComputer = document.querySelector('[data-vs-computer]');
+const twoPlayers = document.querySelector('[data-two-players]');
 let winningLine = document.querySelector('.winning-line');
 
+let modal = document.getElementById("myModal");
+let closeModalSpan = document.getElementsByClassName("close")[0];
+let playerRadio = document.getElementsByClassName("player-radio")[0];
+let computerRadio = document.getElementsByClassName("computer-radio")[0];
+
 const board = new Board();
+
+// EVENTS, FUNCTIONS
+
+function fadeOutModal(modalForFade){
+  modalForFade.classList.add("fadeout");
+  setTimeout(function() {
+    modalForFade.style.display = "none";
+  }, 1000);
+}
 
 fields.forEach(field => {
   field.addEventListener('click', () => {
@@ -451,4 +768,41 @@ window.onresize = function(){
   if(board.gameOver){
     board.updateWinningArrow(board.arrowNumber1, board.arrowNumber2);
   }
+}
+
+twoPlayers.addEventListener('click', () => {
+  board.twoPlayersMode();
+  board.startPlayer = 1;
+  board.turnPlayer = 1;
+});
+
+vsComputer.addEventListener('click', () => {
+  modal.classList.remove("fadeout");
+  modal.style.display = "block";
+  playerRadio.checked = false;
+  computerRadio.checked = false;
+});
+
+closeModalSpan.onclick = function() {
+  fadeOutModal(modal);
+}
+
+playerRadio.onclick = function() {
+  fadeOutModal(modal);
+  board.vsComputerMode();
+  board.clear();
+  board.resetScore();
+  board.startPlayer = 1;
+  board.turnPlayer = 1;
+}
+
+computerRadio.onclick = function() {
+  fadeOutModal(modal);
+  board.vsComputerMode();
+  board.clear();
+  board.resetScore();
+  board.startPlayer = 3;
+  board.turnPlayer = 3;
+  let shapeToDraw = board.findShape();
+  board.drawShape(shapeToDraw);
 }

@@ -12,6 +12,62 @@ body{
   background: linear-gradient(to right, #4b6cb7, #182848);
 }
 
+/* MODAL */
+
+.fadeout {
+  opacity:0;
+}
+.fadein {
+  opacity:1;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  -webkit-transition: opacity 1s; 
+  -moz-transition: opacity 1s; 
+  transition: opacity 1s; 
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* MODAL END */
+
+
+
+
 .tictactoe-grid{
   display: grid;
   justify-content: center;
@@ -50,15 +106,28 @@ body{
   background-color: rgba(255, 255, 255, .1);
 }
 
-.tictactoe-grid button.reset-score, .tictactoe-grid button.play-again{
+.tictactoe-grid button.reset-score, .tictactoe-grid button.play-again,
+.tictactoe-grid button.vs-computer, .tictactoe-grid button.two-players{
   height: 50px;
-  width: 50px;
+  width: 65px;
   font-size: 1rem;
   color: #fff;
   margin-top: 1rem;
+  margin-left: -.5rem;
   border: none;
-  padding-left: 0;
+  padding-left: .5rem;
+  padding-right: .5rem;
   text-align: left;
+}
+
+.tictactoe-grid button.two-players{
+  width: 75px;
+  background-color: rgba(255, 255, 255, .1);
+  cursor: not-allowed;
+}
+
+.tictactoe-grid button.vs-computer{
+  width: 100px;
 }
 
 button.no-top-border{
@@ -109,9 +178,19 @@ button.no-right-border{
     font-size: .75rem;
   }
 
-  .tictactoe-grid button.play-again, .tictactoe-grid button.reset-score{
+  .tictactoe-grid button.play-again, .tictactoe-grid button.reset-score,
+  .tictactoe-grid button.two-players, .tictactoe-grid button.vs-computer{
     font-size: .75rem;
-    margin-top: 0
+    margin-top: 0;
+    width: 50px;
+  }
+
+  .tictactoe-grid button.two-players{
+    width: 60px;
+  }
+
+  .tictactoe-grid button.vs-computer{
+    width: 75px;
   }
 } 
 
@@ -137,9 +216,23 @@ button.no-right-border{
     font-size: .6rem;
   }
 
-  .tictactoe-grid button.play-again, .tictactoe-grid button.reset-score{
+  .tictactoe-grid button.play-again, .tictactoe-grid button.reset-score,
+  .tictactoe-grid button.two-players, .tictactoe-grid button.vs-computer{
     font-size: .6rem;
     margin-top: -.5rem;
+    width: 45px;
+    padding-top: 0;
+    height: 35px;
+  }
+
+  .tictactoe-grid button.two-players{
+    height: 35px;
+    width: 50px;
+  }
+
+  .tictactoe-grid button.vs-computer{
+    height: 35px;
+    width: 65px;
   }
 }
 
@@ -183,13 +276,24 @@ button.no-right-border{
     font-size: .75rem;
   }
 
-  .tictactoe-grid button.play-again, .tictactoe-grid button.reset-score{
+  .tictactoe-grid button.play-again, .tictactoe-grid button.reset-score,
+  .tictactoe-grid button.two-players, .tictactoe-grid button.vs-computer{
     font-size: .75rem;
-    margin-top: 0;
+    margin-top: .3rem;
     display: block;
+    width: 50px;
   }
 
-  .tictactoe-grid button.reset-score{
-    margin-top: -1.7rem;
+  .tictactoe-grid button.reset-score, .tictactoe-grid button.vs-computer,
+  .tictactoe-grid button.two-players{
+    margin-top: -.7rem;
+  }
+
+  .tictactoe-grid button.vs-computer{
+    width: 75px;
+  }
+
+  .tictactoe-grid button.two-players{
+    width: 60px;
   }
 }
