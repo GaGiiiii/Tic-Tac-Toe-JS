@@ -297,3 +297,9 @@ button.no-right-border{
     width: 60px;
   }
 }
+
+@media (max-height: 737px) and (max-width: 415px) {
+  .tictactoe-grid{
+    margin-top: -5rem;
+  }
+}
