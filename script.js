@@ -251,6 +251,7 @@ class Board{
       // PLAYER GOES FIRST
   
       if(this.leftTurns === 8){
+
         // da li je prazno polje 5
         if(this.isFieldEmpty(fields[4])){
           return fields[4];
@@ -260,6 +261,19 @@ class Board{
       }
   
       if(this.leftTurns === 6){
+
+        if(fields[5].innerText === fields[6].innerText && fields[5].innerText === 'X'){
+          return fields[1];
+        }
+
+        if(fields[0].innerText === fields[7].innerText && fields[0].innerText === 'X'){
+          return fields[3];
+        }
+
+        if(fields[2].innerText === fields[7].innerText && fields[2].innerText === 'X'){
+          return fields[3];
+        }
+
         if((fields[0].innerText === 'X' && fields[8].innerText === 'X') || (fields[2].innerText === 'X' && fields[6].innerText === 'X')){
           return fields[1];
         }
